@@ -1,14 +1,33 @@
-export const getMovies = async () => {
-    const apiKey = process.env.MOVIE_DB_ACCESS_TOKEN;
-    const res = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?primary_release_date.gte=${new Date()?.toISOString()}&sort_by=primary_release_date.desc`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
+export const getMovies = async (page) => {
+  const apiKey = process.env.MOVIE_DB_ACCESS_TOKEN;
+  const res = await fetch(
+    `https://api.themoviedb.org/3/discover/movie?primary_release_date.gte=${new Date()?.toISOString()}&sort_by=primary_release_date.desc&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
       },
-    ).then((res) => res.json());
-  console.log(res)
-    return res.results;
-  };
-  
+    },
+  ).then((res) => res.json());
+
+  return res.results;
+};
+
+export const getMovieDetails = async (id) => {
+  const apiKey = process.env.MOVIE_DB_ACCESS_TOKEN;
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  }).then((res) => res.json());
+  return res;
+};
+
+export const getCreditDetails = async (id) => {
+  const apiKey = process.env.MOVIE_DB_ACCESS_TOKEN;
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/credits`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  }).then((res) => res.json()); 
+  return res;
+};
