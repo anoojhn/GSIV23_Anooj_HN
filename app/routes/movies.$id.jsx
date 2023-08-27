@@ -79,7 +79,7 @@ const MovieDetails = () => {
             {creditDetails?.cast?.length > 0 && (
               <div className="text-xl mb-[8px]">{getCast()}</div>
             )}
-            <div className="text-xl">{movieDetails?.overview}</div>
+            {movieDetails?.overview?.length > 0 && (<div className="text-xl">{`Description: ${movieDetails?.overview}`}</div>)}
           </div>
         </div>
       )}
