@@ -55,7 +55,7 @@ const MovieDetails = () => {
           <div className="text-[#4A4A4A]">
             <div className="text-2xl font-medium mb-[8px]">
               <span>{movieDetails?.title}</span>
-              <span className="text-[#9B9B9B]">{` (${movieDetails?.vote_average})`}</span>
+              <span className="text-[#9B9B9B]">{` (${movieDetails?.vote_average > 0 ? parseFloat(movieDetails?.vote_average)?.toFixed(2) : movieDetails?.vote_average})`}</span>
             </div>
             <div className="text-xl mb-[4px]">
               <span>{new Date(movieDetails?.release_date)?.getFullYear()}</span>

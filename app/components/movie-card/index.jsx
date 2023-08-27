@@ -20,7 +20,7 @@ const MovieCard = ({ movie }) => {
         <div className="pt-1 pr-1 pb-1 pl-1">
           <div className="flex justify-between mb-1">
             <div className="font-medium truncate">{title}</div>
-            <div className="text-[#9B9B9B]">{`(${vote_average})`}</div>
+            <div className="text-[#9B9B9B]">{`(${vote_average > 0 ? parseFloat(vote_average)?.toFixed(2) : vote_average})`}</div>
           </div>
           <div className="line-clamp-2">{overview}</div>
         </div>
