@@ -35,7 +35,7 @@ const MovieList = () => {
         setHeight(element.getBoundingClientRect().height);
       }
     },
-    [movies.length],
+    [movies?.length],
   );
 
   useEffect(() => {
