@@ -5,6 +5,8 @@ import back from "../../assets/back.svg";
 
 const Header = ({
   isSearchable = false,
+  searchText,
+  setSearchText,
   header = "Movie Details",
   isBackButton = true,
 }) => {
@@ -14,6 +16,14 @@ const Header = ({
       {isSearchable ? (
         <div className="rounded-md bg-[#D8D8D8] flex gap-x-2 items-center px-2 py-1 h-[40px] min-w-[50%] max-w-[600px]">
           <img src={search} width={20} height={20} />
+          <input
+            type="text"
+            className="bg-transparent outline-none text-xl w-full"
+            value={searchText}
+            placeholder="Search"
+            data-testid="search-input"
+            onChange={(e) => setSearchText(e?.target?.value)}
+          />
         </div>
       ) : (
         <div className="flex items-center gap-x-4">
