@@ -1,15 +1,22 @@
 import { json } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
-import { getMovies } from "../models/movie.server";
+import { getMovies, getSearchResults } from "../models/movie.server";
 import Header from "../components/header";
 import MovieCard from "../components/movie-card";
 import { useState, useEffect, useCallback } from "react";
+import { useDebounce } from "../customHooks";
 
 const getPage = (params) => Number(params.get("page") || "1");
+const getQuery = (params) => String(params.get("query") || "");
 
 export const loader = async ({ request }) => {
   const page = getPage(new URL(request.url).searchParams);
-
+  const query = getQuery(new URL(request.url).searchParams);
+  if (query) {
+    return json({
+      data: await getSearchResults(query, page),
+    });
+  }
   return json({
     data: await getMovies(page),
   });
@@ -19,8 +26,8 @@ const MovieList = () => {
   const { data } = useLoaderData();
   const [movies, setMovies] = useState(data);
   const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState(data);
   const fetcher = useFetcher();
+  const searchFetcher = useFetcher();
 
   const [scrollPos, setScrollPos] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
@@ -38,16 +45,17 @@ const MovieList = () => {
     [movies?.length],
   );
 
+  const searchQuery = useDebounce(searchText, 500);
+
   useEffect(() => {
-    if (searchText) {
-      const tempMovies = movies?.filter((item) =>
-        item?.title?.toLowerCase()?.includes(searchText?.toLowerCase()),
-      );
-      setSearchResults(tempMovies);
+    if (searchQuery) {
+      searchFetcher.load(`?index&page=1&query=${searchQuery}`);
     } else {
-      setSearchResults(movies);
+      searchFetcher.load(`?index`);
     }
-  }, [searchText, movies]);
+    window.scrollTo(0, 0);
+    setPage(2);
+  }, [searchQuery]);
   useEffect(() => {
     const scrollListener = () => {
       setClientHeight(window.innerHeight);
@@ -68,10 +76,18 @@ const MovieList = () => {
     if (!shouldFetch || !height) return;
     if (clientHeight + scrollPos + 100 < height) return;
 
-    fetcher.load(`?index&page=${page}`);
+    fetcher.load(
+      `?index&page=${page}${searchQuery ? `&query=${searchQuery}` : ""}`,
+    );
 
     setShouldFetch(false);
   }, [clientHeight, scrollPos, fetcher]);
+
+  useEffect(() => {
+    if (searchFetcher?.data?.data) {
+      setMovies(searchFetcher?.data?.data);
+    }
+  }, [searchFetcher?.data?.data]);
 
   useEffect(() => {
     if (fetcher?.data?.data && fetcher?.data?.data.length === 0) {
@@ -94,7 +110,7 @@ const MovieList = () => {
         setSearchText={setSearchText}
       />
       <div className="flex gap-x-[13px] gap-y-4 flex-wrap px-4 py-4 relative top-[64px]">
-        {searchResults?.map((movie) => (
+        {movies?.map((movie) => (
           <div key={movie.id}>
             <MovieCard movie={movie} />
           </div>
