@@ -32,7 +32,7 @@ const MovieDetails = () => {
   const getMovieRunTime = () => {
     const minutes = movieDetails?.runtime % 60;
     const hours = (movieDetails?.runtime - minutes) / 60;
-    return `${`${hours < 9 ? '0' : ''}${hours}`}:${minutes}`
+    return `${`${hours < 9 ? '0' : ''}${hours}`}:${`${minutes < 9 ? '0' : ''}${minutes}`}`
 
   }
 
